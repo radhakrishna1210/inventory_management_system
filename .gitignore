@@ -59,3 +59,6 @@ Thumbs.db
 # Uploads (optional - you may want to commit sample images)
 # app/static/uploads/*
 
+# Render
+.render/
+

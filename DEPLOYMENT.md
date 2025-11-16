@@ -1,0 +1,223 @@
+# Deployment Guide for Render
+
+This guide will help you deploy the Inventory Management System to Render.
+
+## Prerequisites
+
+1. GitHub account with this repository
+2. Render account (sign up at https://render.com)
+
+## Step-by-Step Deployment
+
+### Option 1: Using PostgreSQL (Recommended for Render Free Tier)
+
+Render's free tier includes PostgreSQL, which works well with this application.
+
+#### 1. Create PostgreSQL Database
+
+1. Go to [Render Dashboard](https://dashboard.render.com)
+2. Click **"New +"** → **"PostgreSQL"**
+3. Configure:
+   - **Name**: `inventory-db`
+   - **Database**: `inventory`
+   - **User**: `inventory_user`
+   - **Region**: Choose closest to you
+   - **Plan**: Free
+4. Click **"Create Database"**
+5. Wait for database to be ready, then copy the **Internal Database URL**
+
+#### 2. Update Requirements for PostgreSQL
+
+Add PostgreSQL driver to `requirements.txt`:
+```
+psycopg2-binary==2.9.9
+```
+
+#### 3. Create Web Service
+
+1. In Render Dashboard, click **"New +"** → **"Web Service"**
+2. Connect your GitHub account if not already connected
+3. Select this repository: `inventory_management_system`
+4. Configure the service:
+   - **Name**: `inventory-management-system`
+   - **Environment**: `Python 3`
+   - **Region**: Same as database
+   - **Branch**: `main`
+   - **Root Directory**: (leave empty)
+   - **Build Command**: 
+     ```
+     pip install -r requirements.txt && flask db upgrade
+     ```
+   - **Start Command**: 
+     ```
+     gunicorn run:app
+     ```
+   - **Plan**: Free
+
+#### 4. Set Environment Variables
+
+In the Web Service settings, go to **"Environment"** and add:
+
+- **SECRET_KEY**: 
+  - Generate a random key: `python -c "import secrets; print(secrets.token_hex(32))"`
+  - Or use: `openssl rand -hex 32`
+
+- **DATABASE_URL**: 
+  - Use the Internal Database URL from step 1
+  - Format: `postgresql://user:password@host:port/database`
+  - Note: Render provides this automatically if you link the database
+
+- **PYTHON_VERSION**: `3.11.0`
+
+#### 5. Link Database (Optional but Recommended)
+
+1. In your Web Service settings
+2. Go to **"Environment"** tab
+3. Under **"Add Environment Variable"**, select **"Add Database"**
+4. Choose your PostgreSQL database
+5. This automatically sets `DATABASE_URL`
+
+#### 6. Deploy
+
+1. Click **"Create Web Service"**
+2. Render will:
+   - Clone your repository
+   - Install dependencies
+   - Run database migrations
+   - Start your application
+3. Wait for deployment to complete (usually 2-5 minutes)
+
+#### 7. Create Admin User
+
+After deployment, you need to create an admin user. You can:
+
+**Option A: Using Render Shell**
+1. Go to your Web Service
+2. Click **"Shell"** tab
+3. Run:
+   ```bash
+   python create_admin.py
+   ```
+
+**Option B: Using Local Connection**
+1. Set up SSH tunnel to Render database
+2. Run `create_admin.py` locally with the database connection
+
+### Option 2: Using External MySQL
+
+If you prefer MySQL, you can use an external MySQL service:
+
+1. **Set up MySQL Database**:
+   - Use services like:
+     - [PlanetScale](https://planetscale.com) (free tier available)
+     - [AWS RDS](https://aws.amazon.com/rds/)
+     - [DigitalOcean Managed Databases](https://www.digitalocean.com/products/managed-databases)
+     - [Railway](https://railway.app) (MySQL available)
+
+2. **Get Connection String**:
+   - Format: `mysql+pymysql://user:password@host:port/database`
+   - Make sure to use `mysql+pymysql://` prefix for PyMySQL
+
+3. **Set Environment Variables**:
+   - `DATABASE_URL`: Your MySQL connection string
+   - `SECRET_KEY`: Generated secret key
+   - `PYTHON_VERSION`: 3.11.0
+
+4. **Follow steps 3-7** from Option 1 (but skip database creation on Render)
+
+## Post-Deployment
+
+### 1. Verify Deployment
+
+- Visit your Render service URL (e.g., `https://inventory-management-system.onrender.com`)
+- You should see the home page
+
+### 2. Run Database Migrations (if needed)
+
+If migrations didn't run during build:
+1. Go to **"Shell"** in Render dashboard
+2. Run: `flask db upgrade`
+
+### 3. Create Admin User
+
+1. Go to **"Shell"** in Render dashboard
+2. Run: `python create_admin.py`
+3. Follow prompts to create admin account
+
+### 4. Access Admin Panel
+
+- Go to: `https://your-app.onrender.com/admin/login`
+- Login with admin credentials
+
+## Important Notes
+
+### File Uploads
+
+- **Local Storage**: Uploaded images are stored in `app/static/uploads/`
+- **Limitation**: On Render free tier, files are ephemeral (lost on restart)
+- **Solution**: Use cloud storage (AWS S3, Cloudinary, etc.) for production
+
+### Environment Variables
+
+Never commit `.env` file to Git. All secrets should be in Render's environment variables.
+
+### Database Migrations
+
+Migrations run automatically during build. If you add new migrations:
+1. Commit to GitHub
+2. Render will auto-deploy
+3. Migrations run in build command
+
+### Static Files
+
+Static files (CSS, images) are served automatically by Flask. Make sure:
+- Files are committed to Git
+- Paths in templates use `url_for('static', ...)`
+
+## Troubleshooting
+
+### Build Fails
+
+- Check build logs in Render dashboard
+- Verify all dependencies in `requirements.txt`
+- Ensure Python version matches
+
+### Database Connection Errors
+
+- Verify `DATABASE_URL` is set correctly
+- Check database is running
+- Ensure database allows connections from Render IPs
+
+### Application Crashes
+
+- Check logs in Render dashboard
+- Verify all environment variables are set
+- Ensure database migrations completed
+
+### Admin User Creation Fails
+
+- Verify database connection
+- Check if User table exists: `flask db upgrade`
+- Try creating user via Render Shell
+
+## Scaling
+
+### Free Tier Limitations
+
+- **Sleeps after 15 minutes** of inactivity
+- **512MB RAM**
+- **Limited CPU**
+
+### Upgrade Options
+
+- **Starter Plan**: $7/month - No sleep, 512MB RAM
+- **Standard Plan**: $25/month - 2GB RAM, better performance
+
+## Support
+
+For issues:
+1. Check Render logs
+2. Review application logs
+3. Check database connection
+4. Verify environment variables
+
