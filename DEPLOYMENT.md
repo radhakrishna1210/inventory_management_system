@@ -76,9 +76,11 @@ In the Web Service settings, go to **"Environment"** tab and add:
 
 - **PYTHON_VERSION**: `3.11.0` (optional, but recommended)
 
-#### 5. Link Database (Recommended - Easiest Method)
+#### 5. Set Environment Variables in Render
 
-**This is the easiest way to set DATABASE_URL automatically:**
+You have several options when adding environment variables:
+
+**Option A: Link Database (Recommended - Easiest for DATABASE_URL)**
 
 1. In your Web Service settings
 2. Go to **"Environment"** tab
@@ -87,6 +89,35 @@ In the Web Service settings, go to **"Environment"** tab and add:
 5. Choose your PostgreSQL database from the list
 6. This automatically sets `DATABASE_URL` with the correct connection string
 7. **Verify**: You should see `DATABASE_URL` appear in your environment variables list
+
+**Option B: New Variable (Manual Entry)**
+
+1. In your Web Service settings
+2. Go to **"Environment"** tab
+3. Click **"Add Environment Variable"**
+4. Select **"New Variable"** from the dropdown
+5. For each variable:
+   - **Key**: Enter the variable name (e.g., `DATABASE_URL`, `SECRET_KEY`)
+   - **Value**: Enter the value
+   - Click **"Save Changes"**
+
+**Option C: From .env (Import from File)**
+
+1. In your Web Service settings
+2. Go to **"Environment"** tab
+3. Click **"Add Environment Variable"**
+4. Select **"From .env"** from the dropdown
+5. Paste the contents of your `.env` file
+6. Render will parse and add all variables
+7. **Note**: Make sure your `.env` file is in the format:
+   ```
+   DATABASE_URL=postgresql://user:password@host:port/database
+   SECRET_KEY=your-secret-key-here
+   ```
+
+**Recommended Setup:**
+- Use **"Add Database"** for `DATABASE_URL` (easiest)
+- Use **"New Variable"** for `SECRET_KEY` and other variables
 
 #### 6. Deploy
 
