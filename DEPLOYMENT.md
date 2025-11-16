@@ -50,8 +50,9 @@ psycopg2-binary==2.9.9
      ```
    - **Start Command**: 
      ```
-     gunicorn run:app
+     gunicorn --bind 0.0.0.0:$PORT run:app
      ```
+   - **Important**: Make sure the start command is exactly `gunicorn --bind 0.0.0.0:$PORT run:app` (not `gunicorn app:app`)
    - **Plan**: Free
 
 #### 4. Set Environment Variables
