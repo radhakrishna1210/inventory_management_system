@@ -57,26 +57,36 @@ psycopg2-binary==2.9.9
 
 #### 4. Set Environment Variables
 
-In the Web Service settings, go to **"Environment"** and add:
+**IMPORTANT**: You MUST set the `DATABASE_URL` environment variable, otherwise the app will fail to start.
+
+In the Web Service settings, go to **"Environment"** tab and add:
 
 - **SECRET_KEY**: 
   - Generate a random key: `python -c "import secrets; print(secrets.token_hex(32))"`
   - Or use: `openssl rand -hex 32`
+  - Click "Generate" or paste your generated key
 
 - **DATABASE_URL**: 
-  - Use the Internal Database URL from step 1
+  - **CRITICAL**: This must be set!
+  - Go to your PostgreSQL database in Render dashboard
+  - Copy the **"Internal Database URL"** (for same-region services) or **"External Database URL"**
   - Format: `postgresql://user:password@host:port/database`
-  - Note: Render provides this automatically if you link the database
+  - **Note**: If the URL starts with `postgres://`, the app will automatically convert it to `postgresql://`
+  - Paste the entire connection string as the value
 
-- **PYTHON_VERSION**: `3.11.0`
+- **PYTHON_VERSION**: `3.11.0` (optional, but recommended)
 
-#### 5. Link Database (Optional but Recommended)
+#### 5. Link Database (Recommended - Easiest Method)
+
+**This is the easiest way to set DATABASE_URL automatically:**
 
 1. In your Web Service settings
 2. Go to **"Environment"** tab
-3. Under **"Add Environment Variable"**, select **"Add Database"**
-4. Choose your PostgreSQL database
-5. This automatically sets `DATABASE_URL`
+3. Scroll down to **"Add Environment Variable"**
+4. Click the dropdown and select **"Add Database"**
+5. Choose your PostgreSQL database from the list
+6. This automatically sets `DATABASE_URL` with the correct connection string
+7. **Verify**: You should see `DATABASE_URL` appear in your environment variables list
 
 #### 6. Deploy
 
