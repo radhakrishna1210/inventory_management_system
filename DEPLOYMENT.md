@@ -185,9 +185,17 @@ Static files (CSS, images) are served automatically by Flask. Make sure:
 
 ### Database Connection Errors
 
+- **Error: "Either 'SQLALCHEMY_DATABASE_URI' or 'SQLALCHEMY_BINDS' must be set"**
+  - **Solution**: The `DATABASE_URL` environment variable is not set
+  - Go to your Web Service → Environment tab
+  - Add `DATABASE_URL` with your PostgreSQL connection string
+  - Or use "Add Database" to link it automatically
+  - Redeploy after adding the variable
+
 - Verify `DATABASE_URL` is set correctly
 - Check database is running
 - Ensure database allows connections from Render IPs
+- For PostgreSQL, make sure the URL uses `postgresql://` (not `postgres://`)
 
 ### Application Crashes
 
