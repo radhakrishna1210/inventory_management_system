@@ -1,0 +1,71 @@
+{% extends 'shop_base.html' %}
+
+{% block content %}
+<div class="login-container">
+    <form method="POST" action="{{ url_for('main.customer_signup') }}" class="login-form" novalidate>
+        {{ form.hidden_tag() }}
+        
+        <h2>Customer Sign Up</h2>
+        
+        <div class="form-group">
+            {{ form.name.label }}
+            {{ form.name(class="form-control") }}
+            {% if form.name.errors %}
+                <div class="error-message">
+                    {% for error in form.name.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label }}
+            {{ form.email(class="form-control") }}
+            {% if form.email.errors %}
+                <div class="error-message">
+                    {% for error in form.email.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.password.label }}
+            {{ form.password(class="form-control") }}
+            {% if form.password.errors %}
+                <div class="error-message">
+                    {% for error in form.password.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.confirm_password.label }}
+            {{ form.confirm_password(class="form-control") }}
+            {% if form.confirm_password.errors %}
+                <div class="error-message">
+                    {% for error in form.confirm_password.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        {{ form.submit(class="btn-primary") }}
+        
+        <div style="margin-top: 1.5rem; text-align: center; padding-top: 1.5rem; border-top: 1px solid #dee2e6;">
+            <p style="margin: 0.5rem 0;">
+                <a href="{{ url_for('main.customer_login') }}" style="color: #007bff; text-decoration: none;">Already have an account? Login</a>
+            </p>
+            <p style="margin: 0.5rem 0;">
+                <a href="{{ url_for('main.admin_login') }}" style="color: #6c757d; text-decoration: none;">Admin Login</a>
+            </p>
+        </div>
+    </form>
+</div>
+{% endblock %}
+

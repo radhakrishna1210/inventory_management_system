@@ -1,0 +1,72 @@
+{% extends 'shop_base.html' %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 2rem auto;">
+    <h2>My Profile</h2>
+    
+    <div style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 2rem;">
+        <h3 style="margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem;">Account Information</h3>
+        
+        <div style="display: grid; gap: 1rem; margin-top: 1.5rem;">
+            <div>
+                <strong>Full Name:</strong>
+                <p style="margin: 0.5rem 0; color: #6c757d;">{{ customer.name }}</p>
+            </div>
+            
+            <div>
+                <strong>Email Address:</strong>
+                <p style="margin: 0.5rem 0; color: #6c757d;">{{ customer.email }}</p>
+            </div>
+            
+            {% if customer.address %}
+            <div>
+                <strong>Address:</strong>
+                <p style="margin: 0.5rem 0; color: #6c757d;">{{ customer.address }}</p>
+            </div>
+            {% endif %}
+            
+            <div>
+                <strong>Member Since:</strong>
+                <p style="margin: 0.5rem 0; color: #6c757d;">{{ customer.created_at.strftime('%B %d, %Y') if customer.created_at else 'N/A' }}</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e9ecef;">
+            <a href="{{ url_for('main.logout') }}" class="btn-delete" style="text-decoration: none; display: inline-block; padding: 0.8rem 1.5rem;">Logout</a>
+        </div>
+    </div>
+    
+    <div style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <h3 style="margin-top: 0; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem;">Recent Orders</h3>
+        
+        {% if orders %}
+            <table style="width: 100%; margin-top: 1.5rem; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Order ID</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Date</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Total</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr style="border-bottom: 1px solid #dee2e6;">
+                        <td style="padding: 12px;">#{{ order.id }}</td>
+                        <td style="padding: 12px;">{{ order.date.strftime('%B %d, %Y') if order.date else 'N/A' }}</td>
+                        <td style="padding: 12px;">${{ "%.2f"|format(order.final_amount) }}</td>
+                        <td style="padding: 12px;">
+                            <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.875rem;">Completed</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p style="margin-top: 1.5rem; color: #6c757d;">You haven't placed any orders yet.</p>
+            <a href="{{ url_for('main.home') }}" style="color: #007bff; text-decoration: none;">Start Shopping →</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

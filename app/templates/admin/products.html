@@ -1,0 +1,105 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<style>
+    /* Styles for the two-column layout */
+    .product-management-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    .form-card {
+        background-color: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .product-table-img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    @media (max-width: 992px) {
+        .product-management-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<h2>Manage Products</h2>
+<p>Add new products or view and edit existing ones.</p>
+
+<div class="product-management-grid">
+    <div class="form-card">
+        <h3>Add New Product</h3>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price ($)</label>
+                <input type="number" step="0.01" id="price" name="price" required>
+            </div>
+            <div class="form-group">
+                <label for="category_name">Category</label>
+                <input type="text" id="category_name" name="category_name" list="category_list" placeholder="Type category name or select from list" required autocomplete="off">
+                <datalist id="category_list">
+                    {% for category in categories %}
+                        <option value="{{ category.name }}">
+                    {% endfor %}
+                </datalist>
+                <small style="color: #6c757d; font-size: 0.875rem;">Type a new category name to create it, or select from existing categories</small>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="images">Product Images</label>
+                <input type="file" id="images" name="images[]" multiple>
+            </div>
+            <button type="submit">Add Product</button>
+        </form>
+    </div>
+
+    <div>
+        <h3>Existing Products</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>
+                        <img src="{{ url_for('static', filename='uploads/' + product.primary_image) }}" alt="{{ product.name }}" class="product-table-img">
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.category.name if product.category else 'N/A' }}</td>
+                    <td>${{ "%.2f"|format(product.price) }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('admin.edit_product', id=product.id) }}" class="btn-edit">Edit</a>
+                        <form action="{{ url_for('admin.delete_product', id=product.id) }}" method="POST" style="display: inline;">
+                           <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this product and all its inventory?');">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+

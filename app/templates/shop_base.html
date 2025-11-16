@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailSystem</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header class="main-header">
+        <div class="container">
+            <a href="{{ url_for('main.home') }}" class="logo">RetailSystem</a>
+            <nav>
+                <a href="{{ url_for('main.home') }}">Shop</a>
+                <a href="{{ url_for('main.view_cart') }}">Cart
+                    {% if session.get('cart') %}
+                    <span class="cart-count">{{ session['cart']|length }}</span>
+                    {% endif %}
+                </a>
+                {% if current_user.is_authenticated %}
+                    {% if is_customer %}
+                        <a href="{{ url_for('main.customer_profile') }}" class="btn-login">Profile</a>
+                        <a href="{{ url_for('main.logout') }}" class="btn-login">Logout</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('main.customer_login') }}" class="btn-login">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 RetailSystem. All rights reserved.</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

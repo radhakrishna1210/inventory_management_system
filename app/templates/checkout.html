@@ -1,0 +1,61 @@
+{% extends 'shop_base.html' %}
+
+{% block content %}
+    <h2>Checkout</h2>
+    
+    <div class="checkout-container">
+        <div>
+            <h3>Order Summary</h3>
+            <div class="order-summary">
+                <table class="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart_items %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>${{ "%.2f"|format(item.product.price) }}</td>
+                            <td>${{ "%.2f"|format(item.total) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" style="text-align: right;">Total:</th>
+                            <th>${{ "%.2f"|format(total) }}</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div>
+            <h3>Customer Information</h3>
+            <form method="POST" class="checkout-form">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Delivery Address *</label>
+                    <textarea id="address" name="address" rows="4" required></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <a href="{{ url_for('main.view_cart') }}" class="btn-edit" style="text-decoration: none; padding: 0.8rem 1.5rem;">Back to Cart</a>
+                    <button type="submit" class="btn-checkout">Place Order</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

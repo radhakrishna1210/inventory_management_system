@@ -1,0 +1,48 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<h2>Add Stock (Batch-wise)</h2>
+<p>Use this form to add a new batch of inventory for an existing product.</p>
+
+<form method="POST" class="form-grid-full custom-grid-cols">
+    <label for="product_id_select">Product:</label>
+    <select id="product_id_select" name="product_id" required>
+        <option value="">-- Select Product --</option>
+        {% for p in products %}
+            <option value="{{ p.id }}">{{ p.name }} (Current Stock: {{ p.stock }})</option>
+        {% endfor %}
+    </select>
+    <input type="number" name="quantity" placeholder="Quantity to Add" min="1" required>
+    <button type="submit">Add Stock</button>
+</form>
+
+<hr style="margin: 2rem 0;">
+
+<h3>All Inventory Batches</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Batch ID</th>
+            <th>Product</th>
+            <th>Quantity in Batch</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for batch in batches %}
+        <tr>
+            <td>{{ batch.id }}</td>
+            <td>
+                <a href="{{ url_for('admin.edit_product', id=batch.product.id) }}" title="Edit this product">
+                    {{ batch.product.name }}
+                </a>
+            </td>
+            <td>{{ batch.quantity }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No batches found. Add stock to see it here.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

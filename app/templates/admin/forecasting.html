@@ -1,0 +1,44 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<style>
+    /* Styles for the summary card and prediction text */
+    .summary-card {
+        background-color: #e9ecef;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        margin: 2rem 0;
+    }
+    .summary-card h3 {
+        margin-top: 0;
+        color: #495057;
+    }
+    .prediction {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 0;
+    }
+    .re-train-section {
+        text-align: center;
+        margin-top: 1rem;
+    }
+</style>
+
+<h2>Demand Forecasting</h2>
+<p>This page uses a machine learning model to predict future product demand based on historical sales data.</p>
+
+<div class="summary-card">
+    <h3>Predicted Total Unit Sales for Next 30 Days</h3>
+    <p class="prediction">{{ prediction }}</p>
+</div>
+
+<div class="re-train-section">
+    <form action="{{ url_for('admin.train_model_route') }}" method="POST" style="display: inline;">
+        <button type="submit" class="btn-edit">Re-Train Model</button>
+    </form>
+    <p><small>Click to re-train the model with the latest sales data. This might take a moment.</small></p>
+</div>
+
+{% endblock %}

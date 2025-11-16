@@ -1,0 +1,135 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<style>
+    /* Styles specific to the dashboard layout */
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+    .card {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .card h3 {
+        margin-top: 0;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 0.5rem;
+    }
+    .full-width {
+        grid-column: 1 / -1;
+    }
+</style>
+
+<h2>Dashboard</h2>
+
+<div class="dashboard-grid">
+    <!-- Sales Trend Chart -->
+    <div class="card full-width">
+        <h3>Sales Trend (Last 30 Days)</h3>
+        <canvas id="salesChart"></canvas>
+    </div>
+
+    <!-- Customer Ratio Chart -->
+    <div class="card">
+        <h3>New vs. Returning Customers</h3>
+        <canvas id="customerChart"></canvas>
+    </div>
+
+    <!-- Revenue by Category Chart -->
+    <div class="card">
+        <h3>Revenue by Category</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+    <!-- Top Products by Revenue -->
+    <div class="card">
+        <h3>Top 5 Products (by Revenue)</h3>
+        <table>
+            <thead><tr><th>Product</th><th>Revenue</th></tr></thead>
+            <tbody>
+                {% for product in top_products_by_revenue %}
+                <tr>
+                    <td>{{ product.product_name }}</td>
+                    <td>${{ "%.2f"|format(product.total_revenue) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Top Products by Units Sold -->
+    <div class="card">
+        <h3>Top 5 Products (by Units Sold)</h3>
+        <table>
+            <thead><tr><th>Product</th><th>Units Sold</th></tr></thead>
+            <tbody>
+                {% for product in top_products_by_units %}
+                <tr>
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.total_units }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sales Trend Chart (Line)
+    const salesCtx = document.getElementById('salesChart').getContext('2d');
+    new Chart(salesCtx, {
+        type: 'line',
+        data: {
+            labels: {{ sales_chart_labels|safe }},
+            datasets: [{
+                label: 'Daily Sales ($)',
+                data: {{ sales_chart_data|safe }},
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1,
+                fill: false
+            }]
+        }
+    });
+
+    // Customer Chart (Pie)
+    const customerCtx = document.getElementById('customerChart').getContext('2d');
+    new Chart(customerCtx, {
+        type: 'pie',
+        data: {
+            labels: ['New Customers', 'Returning Customers'],
+            datasets: [{
+                label: 'Customer Type',
+                data: [{{ new_customers }}, {{ returning_customers }}],
+                backgroundColor: ['rgb(54, 162, 235)', 'rgb(255, 205, 86)']
+            }]
+        }
+    });
+    
+    // Category Revenue Chart (Doughnut)
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(categoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_chart_labels|safe }},
+            datasets: [{
+                label: 'Revenue',
+                data: {{ category_chart_data|safe }},
+                backgroundColor: [
+                    'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)',
+                    'rgb(75, 192, 192)', 'rgb(153, 102, 255)', 'rgb(255, 159, 64)'
+                ]
+            }]
+        }
+    });
+});
+</script>
+{% endblock %}

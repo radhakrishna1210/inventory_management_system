@@ -1,0 +1,41 @@
+{% extends 'admin_base.html' %}
+
+{% block content %}
+<h2>Inventory Summary</h2>
+<p>This shows the total available stock for each product across all batches.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Description</th>
+            <th>Total Stock</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in inventory %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.description or 'N/A' }}</td>
+            <td class="{{ 'low-stock' if (item.total_quantity or 0) < 10 else '' }}">
+                {{ item.total_quantity or 0 }}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No products found. Add products and stock first.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block styles %}
+<style>
+    /* Style to make low stock items stand out */
+    .low-stock {
+        font-weight: bold;
+        color: #dc3545; /* Bootstrap's danger color */
+    }
+</style>
+{% endblock %}
