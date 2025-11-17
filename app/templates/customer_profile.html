@@ -54,7 +54,7 @@
                     <tr style="border-bottom: 1px solid #dee2e6;">
                         <td style="padding: 12px;">#{{ order.id }}</td>
                         <td style="padding: 12px;">{{ order.date.strftime('%B %d, %Y') if order.date else 'N/A' }}</td>
-                        <td style="padding: 12px;">${{ "%.2f"|format(order.final_amount) }}</td>
+                        <td style="padding: 12px;">₹{{ "%.2f"|format(order.final_amount) }}</td>
                         <td style="padding: 12px;">
                             <span style="background-color: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.875rem;">Completed</span>
                         </td>

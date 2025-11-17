@@ -26,18 +26,18 @@
                 <tr>
                     <td>{{ item.product_name }}</td>
                     <td>{{ item.quantity }}</td>
-                    <td>${{ "%.2f"|format(item.price_per_unit) }}</td>
-                    <td>${{ "%.2f"|format(item.quantity * item.price_per_unit) }}</td>
+                    <td>₹{{ "%.2f"|format(item.price_per_unit) }}</td>
+                    <td>₹{{ "%.2f"|format(item.quantity * item.price_per_unit) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
         
         <div class="cost-summary">
-            <p><strong>Subtotal:</strong> ${{ "%.2f"|format(bill.subtotal) }}</p>
-            <p><strong>Tax ({{ bill.tax_percentage }}%):</strong> + ${{ "%.2f"|format(bill.subtotal * bill.tax_percentage / 100) }}</p>
-            <p><strong>Discount:</strong> - ${{ "%.2f"|format(bill.discount_amount) }}</p>
-            <h3>Final Amount: ${{ "%.2f"|format(bill.final_amount) }}</h3>
+            <p><strong>Subtotal:</strong> ₹{{ "%.2f"|format(bill.subtotal) }}</p>
+            <p><strong>Tax ({{ bill.tax_percentage }}%):</strong> + ₹{{ "%.2f"|format(bill.subtotal * bill.tax_percentage / 100) }}</p>
+            <p><strong>Discount:</strong> - ₹{{ "%.2f"|format(bill.discount_amount) }}</p>
+            <h3>Final Amount: ₹{{ "%.2f"|format(bill.final_amount) }}</h3>
         </div>
     </div>
 {% endblock %}
