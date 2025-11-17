@@ -11,7 +11,7 @@
             <a href="{{ url_for('main.product_detail', id=product.id) }}">
                 <img src="{{ url_for('static', filename='uploads/' + product.primary_image) }}" alt="{{ product.name }}">
                 <h3>{{ product.name }}</h3>
-                <p class="price">₹{{ "%.2f"|format(product.price) }}</p>
+                <p class="price">${{ "%.2f"|format(product.price) }}</p>
                 {% if product.stock > 0 %}
                     <span class="stock-level">In Stock</span>
                 {% else %}
