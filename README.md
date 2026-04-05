@@ -1,4 +1,4 @@
-# Inventory Management System.
+# Inventory Management System
 
 A complete Inventory and Sales Management System designed for small retail businesses. This web application provides administrators with full control over products, stock levels, and sales through a powerful admin panel, while customers can browse products, add to cart, and place orders.
 
